@@ -1,25 +1,22 @@
-name: Deploy
+name: Deploy Cloudflare Worker
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
   repository_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      # Add your build steps here
-
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    needs: build
     steps:
-      - uses: actions/checkout@v2
-      - name: Publish
-        uses: cloudflare/wrangler-action@1.3.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: publish
+      - uses: actions/checkout@v3
+
+      - name: Install Wrangler (Latest Version)
+        run: npm install -g wrangler
+
+      - name: Publish to Cloudflare Workers
+        run: wrangler publish --api-token=${{ secrets.CF_API_TOKEN }}
